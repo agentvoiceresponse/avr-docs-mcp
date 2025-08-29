@@ -1,9 +1,16 @@
 {
   "name": "avr-docs-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Agent Voice Response <info@agentvoiceresponse.com>",
   "description": "MCP server for AVR documentation",
   "main": "dist/index.js",
+  "bin": {
+    "avr-docs-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "type": "module",
   "scripts": {
     "build": "tsc",
