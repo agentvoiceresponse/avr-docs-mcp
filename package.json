@@ -24,6 +24,10 @@
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agentvoiceresponse/avr-docs-mcp.git"
+  },
   "contributors": [
     {
       "name": "Giuseppe Careri",
