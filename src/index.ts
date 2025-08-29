@@ -82,14 +82,7 @@ const tools: Tool[] = [
       required: ["pageId"],
     },
   },
-  {
-    name: "test_wiki_connection",
-    description: "Test the connection to Wiki.JS",
-    inputSchema: {
-      type: "object",
-      properties: {},
-    },
-  },
+
 ];
 
 // Create the server
@@ -189,20 +182,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     `Author: ${page.author.name} (${page.author.email})\n` +
                     `Tags: ${page.tags.join(', ') || 'No tags'}\n\n` +
                     `**Content:**\n\n${page.content}`,
-            },
-          ],
-        };
-
-      case "test_wiki_connection":
-        const isConnected = await wikiService.testConnection();
-        
-        return {
-          content: [
-            {
-              type: "text",
-              text: isConnected 
-                ? "✅ Successfully connected to Wiki.JS"
-                : "❌ Failed to connect to Wiki.JS. Please check your configuration.",
             },
           ],
         };
