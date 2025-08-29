@@ -1,0 +1,16 @@
+{
+    "mcpServers": {
+      "avr-docs-mcp": { 
+        "command": "npx",
+        "args": [
+          "avr-docs-mcp"
+        ],
+        "env": {
+          "WIKI_JS_BASE_URL": "https://wiki.agentvoiceresponse.com",
+          "WIKI_JS_API_KEY": "",
+          "LOG_LEVEL": "info",
+          "PATH": "/Users/[you]/.nvm/versions/node/v20.11.1/bin:/usr/local/bin:/usr/bin:/bin"
+        }
+      }
+    }
+  }

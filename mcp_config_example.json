@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "avr-wiki-docs": {
-      "command": "/path/to/.nvm/versions/node/v20.11.1/bin/node",
+      "command": "/Users/[you]/.nvm/versions/node/v20.11.1/bin/node",
       "args": ["/path/to/avr-docs-mcp/dist/index.js"],
       "env": {
         "WIKI_JS_BASE_URL": "https://your-wiki-instance.com",

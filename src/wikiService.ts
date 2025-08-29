@@ -354,32 +354,5 @@ export class WikiService {
     return this.getPage(path);
   }
 
-  /**
-   * Test the connection to Wiki.JS
-   */
-  async testConnection(): Promise<boolean> {
-    try {
-      this.log('debug', 'Testing connection to Wiki.JS');
-      
-      const graphqlQuery = `
-        query TestConnection {
-          system {
-            info {
-              dbVersion
-              platform
-              nodeVersion
-            }
-          }
-        }
-      `;
 
-      await this.executeQuery(graphqlQuery);
-      
-      this.log('info', 'Connection test successful');
-      return true;
-    } catch (error) {
-      this.log('error', `Connection test failed: ${error instanceof Error ? error.message : String(error)}`);
-      return false;
-    }
-  }
 }

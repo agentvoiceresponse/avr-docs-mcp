@@ -93,10 +93,7 @@ Get a specific page by its ID or path.
 **Parameters:**
 - `pageId` (required): The ID (numeric) or path (string) of the page to retrieve. Examples: '3' for ID, 'deepgram' for path
 
-### 4. test_wiki_connection
-Test the connection to Wiki.JS.
 
-**Parameters:** None
 
 ## Wiki.JS API Configuration
 
