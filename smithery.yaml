@@ -1,0 +1,43 @@
+# Smithery.ai Configuration for AVR Docs MCP Server
+# This MCP server provides integration with Wiki.JS for searching and listing pages
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      wikiJsBaseUrl:
+        type: string
+        description: "The base URL of your Wiki.JS instance (e.g., https://wiki.agentvoiceresponse.com)"
+        default: "https://wiki.agentvoiceresponse.com"
+      wikiJsApiKey:
+        type: string
+        description: "Your Wiki.JS API key with read permissions for pages and search"
+      logLevel:
+        type: string
+        description: "Logging level for the MCP server"
+        enum: ["debug", "info", "warn", "error"]
+        default: "info"
+    required: ["wikiJsApiKey"]
+  commandFunction: |-
+    (config) => ({
+      command: 'node',
+      args: ['dist/index.js'],
+      env: {
+        WIKI_JS_BASE_URL: config.wikiJsBaseUrl,
+        WIKI_JS_API_KEY: config.wikiJsApiKey,
+        LOG_LEVEL: config.logLevel
+      }
+    })
+
+# Optional build configuration for Docker
+build:
+  dockerfile: Dockerfile
+  dockerBuildPath: .
+
+# Project metadata
+name: "AVR Docs MCP Server"
+description: "MCP server for AVR documentation with Wiki.JS integration"
+version: "1.0.2"
+author: "Agent Voice Response <info@agentvoiceresponse.com>"
+keywords: ["mcp", "server", "avr", "documentation", "modelcontextprotocol", "wiki.js"]
