@@ -3,12 +3,15 @@
 import { config } from 'dotenv';
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 import { WikiService } from "./wikiService.js";
+import express, { Request, Response } from 'express';
+import cors from 'cors';
 
 // Load environment variables from .env file
 config();
@@ -196,9 +199,44 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 // Start the server
 async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error("AVR Docs MCP server started with Wiki.JS integration");
+  const mode = process.env.MCP_MODE || 'stdio';
+  const port = parseInt(process.env.PORT || '3000');
+
+  if (mode === 'http') {
+    // HTTP Stream mode
+    const app = express();
+    
+    // Enable CORS for all routes
+    app.use(cors());
+    app.use(express.json());
+
+    // Health check endpoint
+    app.get('/health', (req: Request, res: Response) => {
+      res.json({ status: 'ok', service: 'avr-docs-mcp', mode: 'http' });
+    });
+
+    // MCP endpoint
+    app.post('/mcp', async (req: Request, res: Response) => {
+      try {
+        const transport = new SSEServerTransport('/mcp', res);
+        await server.connect(transport);
+      } catch (error) {
+        console.error('Failed to connect MCP server:', error);
+        res.status(500).json({ error: 'Failed to connect MCP server' });
+      }
+    });
+
+    app.listen(port, () => {
+      console.log(`AVR Docs MCP server started in HTTP mode on port ${port}`);
+      console.log(`Health check: http://localhost:${port}/health`);
+      console.log(`MCP endpoint: http://localhost:${port}/mcp`);
+    });
+  } else {
+    // Stdio mode (default)
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error("AVR Docs MCP server started with Wiki.JS integration in stdio mode");
+  }
 }
 
 main().catch((error) => {

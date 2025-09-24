@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  avr-docs-mcp:
+    build: .
+    container_name: avr-docs-mcp
+    ports:
+      - "3000:3000"
+    environment:
+      - WIKI_JS_BASE_URL=https://wiki.agentvoiceresponse.com
+      - WIKI_JS_API_KEY=${WIKI_JS_API_KEY}
+      - MCP_MODE=http
+      - PORT=3000
+      - LOG_LEVEL=info
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
