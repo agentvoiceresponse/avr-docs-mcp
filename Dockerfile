@@ -4,7 +4,8 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci --omit=dev && npm cache clean --force
+# Install all dependencies including dev dependencies for building
+RUN npm ci && npm cache clean --force
 
 ###################
 # BUILD FOR PRODUCTION
@@ -21,9 +22,6 @@ COPY --chown=node:node package*.json ./
 COPY --chown=node:node tsconfig.json ./
 
 COPY --chown=node:node src ./src
-
-# Install TypeScript globally for building
-RUN npm install -g typescript
 
 # Build the TypeScript code
 RUN npm run build
