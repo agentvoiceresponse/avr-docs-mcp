@@ -8,6 +8,8 @@ This MCP (Model Context Protocol) server provides integration with Wiki.JS for s
 - **List Wiki.JS Pages**: Get a paginated list of all available pages
 - **Get Specific Page**: Retrieve a specific page by its ID
 - **Connection Testing**: Test the connection to your Wiki.JS instance
+- **Multiple Transport Modes**: Support for both stdio and HTTP stream modes
+- **Docker Support**: Ready-to-use Docker image with health checks
 
 ## Setup
 
@@ -33,6 +35,10 @@ cp .env.example .env
 WIKI_JS_BASE_URL=https://your-wiki-instance.com
 WIKI_JS_API_KEY=your-api-key-here
 LOG_LEVEL=info
+
+# MCP Server Configuration
+MCP_MODE=stdio
+PORT=3000
 ```
 
 #### Option 2: Using system environment variables
@@ -41,6 +47,8 @@ LOG_LEVEL=info
 export WIKI_JS_BASE_URL="https://your-wiki-instance.com"
 export WIKI_JS_API_KEY="your-api-key-here"
 export LOG_LEVEL="info"
+export MCP_MODE="stdio"
+export PORT="3000"
 ```
 
 ### Installation
@@ -68,6 +76,82 @@ npm start
 For development:
 ```bash
 npm run dev
+```
+
+## Running Modes
+
+The server supports two modes of operation:
+
+### Stdio Mode (Default)
+The server runs in stdio mode by default, communicating through standard input/output. This is the traditional MCP mode.
+
+```bash
+npm start
+# or
+npm run start:http  # for HTTP mode
+# or
+MCP_MODE=stdio npm start
+```
+
+### HTTP Stream Mode
+The server can also run in HTTP mode, providing a REST API with Server-Sent Events (SSE) for MCP communication.
+
+```bash
+npm run start:http
+# or
+MCP_MODE=http npm start
+```
+
+When running in HTTP mode, the server provides:
+- **Health Check**: `GET /health` - Returns server status
+- **MCP Endpoint**: `POST /mcp` - MCP communication endpoint
+
+## Docker Usage
+
+### Using the Docker Image
+
+```bash
+# Run in stdio mode (default)
+docker run -d \
+  --name avr-docs-mcp \
+  -e WIKI_JS_BASE_URL="https://your-wiki-instance.com" \
+  -e WIKI_JS_API_KEY="your-api-key-here" \
+  agentvoiceresponse/avr-docs-mcp:latest
+
+# Run in HTTP mode
+docker run -d \
+  --name avr-docs-mcp \
+  -p 3000:3000 \
+  -e WIKI_JS_BASE_URL="https://your-wiki-instance.com" \
+  -e WIKI_JS_API_KEY="your-api-key-here" \
+  -e MCP_MODE="http" \
+  -e PORT="3000" \
+  agentvoiceresponse/avr-docs-mcp:latest
+```
+
+### Docker Compose
+
+```yaml
+version: '3.8'
+
+services:
+  avr-docs-mcp:
+    image: agentvoiceresponse/avr-docs-mcp:latest
+    container_name: avr-docs-mcp
+    ports:
+      - "3000:3000"  # Only needed for HTTP mode
+    environment:
+      - WIKI_JS_BASE_URL=https://your-wiki-instance.com
+      - WIKI_JS_API_KEY=your-api-key-here
+      - MCP_MODE=http
+      - PORT=3000
+      - LOG_LEVEL=info
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 ```
 
 ## Available Tools
