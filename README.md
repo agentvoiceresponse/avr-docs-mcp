@@ -104,7 +104,62 @@ MCP_MODE=http npm start
 
 When running in HTTP mode, the server provides:
 - **Health Check**: `GET /health` - Returns server status
-- **MCP Endpoint**: `POST /mcp` - MCP communication endpoint
+- **MCP Endpoint**: `POST /mcp` - MCP communication endpoint using JSON-RPC 2.0
+
+### Testing HTTP Mode
+
+You can test the HTTP mode using curl or Postman:
+
+```bash
+# Health check
+curl http://localhost:3000/health
+
+# Initialize MCP session
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2024-11-05",
+      "capabilities": {},
+      "clientInfo": {
+        "name": "curl-client",
+        "version": "1.0.0"
+      }
+    }
+  }'
+
+# List available tools (use session ID from initialize response)
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -H "mcp-session-id: <session-id-from-initialize>" \
+  -d '{"jsonrpc": "2.0", "id": 2, "method": "tools/list"}'
+
+# Call a tool (use session ID from initialize response)
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -H "mcp-session-id: <session-id-from-initialize>" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "tools/call",
+    "params": {
+      "name": "search_wiki_pages",
+      "arguments": {
+        "query": "deepgram",
+        "page": 1,
+        "limit": 10
+      }
+    }
+  }'
+```
+
+Or use the built-in test client:
+```bash
+npm run test:http
+```
 
 ## Docker Usage
 
